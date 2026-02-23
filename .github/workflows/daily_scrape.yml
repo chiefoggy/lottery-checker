@@ -1,0 +1,26 @@
+name: Daily TOTO Scrape
+on:
+  schedule:
+    - cron: '0 14 * * *' # 14:00 UTC is 10:00 PM Singapore Time
+  workflow_dispatch: # Allows manual run
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install pandas requests beautifulsoup4
+      - name: Run script
+        run: python daily_check.py
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add toto_history.csv
+          git commit -m "Auto-update draws" || exit 0
+          git push

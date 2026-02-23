@@ -7,8 +7,7 @@ import time
 
 # Configuration
 DB_FILE = "toto_history.csv"
-BASE_URL = "/Users/weidong/Documents/development/lottery-checker/toto_history.csv" #have to use full directory for CRON job
-#BASE_URL = "https://www.singaporepools.com.sg/en/product/sr/Pages/toto_results.aspx"
+BASE_URL = "https://www.singaporepools.com.sg/en/product/sr/Pages/toto_results.aspx"
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36"}
 
 def get_encoded_url(draw_no):
