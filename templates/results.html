@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - TOTO Scanner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4d4d;
+            --success: #00d2d3;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            color: var(--text);
+        }
+
+        .container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 20px;
+        }
+
+        .draw-info h2 {
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+        }
+
+        .draw-info p {
+            opacity: 0.6;
+            font-weight: 300;
+        }
+
+        .jackpot {
+            background: rgba(255, 77, 77, 0.2);
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--primary);
+            text-align: right;
+        }
+
+        .jackpot span {
+            display: block;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .jackpot strong {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .official-nums {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .official-nums h3 {
+            margin-bottom: 15px;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .num-circle {
+            display: inline-flex;
+            width: 45px;
+            height: 45px;
+            background: var(--text);
+            color: #24243e;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin: 0 5px;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .num-circle.additional {
+            background: #ff9f43;
+            color: white;
+        }
+
+        .results-section h3 {
+            margin-bottom: 20px;
+        }
+
+        .ticket-row {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .ticket-row:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .user-nums {
+            display: flex;
+            align-items: center;
+        }
+
+        .ball {
+            width: 38px;
+            height: 38px;
+            border: 1.5px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .ball.match {
+            background: var(--success);
+            border-color: var(--success);
+            color: #24243e;
+            font-weight: 600;
+            box-shadow: 0 0 15px rgba(0, 210, 211, 0.4);
+        }
+
+        .ball.match-add {
+            background: #ff9f43;
+            border-color: #ff9f43;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 0 15px rgba(255, 159, 67, 0.4);
+        }
+
+        .win-status {
+            text-align: right;
+        }
+
+        .win-status span {
+            display: block;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        .win-status .prize {
+            color: var(--success);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .no-matches {
+            opacity: 0.4;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            color: var(--text);
+            text-decoration: none;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .back-btn:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="draw-info">
+                <p>Latest Results</p>
+                <h2>Draw: {{ official.draw_date }}</h2>
+            </div>
+            <div class="jackpot">
+                <span>ESTIMATED JACKPOT</span>
+                <strong>{{ official.group1_prize }}</strong>
+            </div>
+        </header>
+
+        <section class="official-nums">
+            <h3>Winning Numbers</h3>
+            <div>
+                {% for n in official.winning_numbers %}
+                <div class="num-circle">{{ "%02d"|format(n) }}</div>
+                {% endfor %}
+                <div class="num-circle additional">{{ "%02d"|format(official.additional_number) }}</div>
+            </div>
+        </section>
+
+        <section class="results-section">
+            <h3>Scanned Ticket (OCR)</h3>
+            {% if user_data.Numbers %}
+            {% for row in user_data.Numbers %}
+            <div class="ticket-row">
+                <div class="user-nums">
+                    {% for n in row %}
+                    {% set val = n|int %}
+                    <div
+                        class="ball {% if val in official.winning_numbers %}match{% elif val == official.additional_number %}match-add{% endif %}">
+                        {{ n }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% set match_count = [] %}
+                {% set add_match = [] %}
+                {% for n in row %}
+                {% if n|int in official.winning_numbers %}{% do match_count.append(1) %}{% endif %}
+                {% if n|int == official.additional_number %}{% do add_match.append(1) %}{% endif %}
+                {% endfor %}
+
+                <div class="win-status">
+                    <span>{{ match_count|length }} Matches {% if add_match|length %}+ Add{% endif %}</span>
+                    <div class="prize">
+                        {% if match_count|length == 6 %}Group 1
+                        {% elif match_count|length == 5 and add_match|length %}Group 2
+                        {% elif match_count|length == 5 %}Group 3
+                        {% elif match_count|length == 4 and add_match|length %}Group 4
+                        {% elif match_count|length == 4 %}Group 5
+                        {% elif match_count|length == 3 and add_match|length %}Group 6
+                        {% elif match_count|length == 3 %}Group 7
+                        {% else %}<span class="no-matches">No Prize</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>No numbers detected. Please try a clearer photo.</p>
+            {% endif %}
+        </section>
+
+        <a href="/" class="back-btn">← Scan Another Ticket</a>
+    </div>
+</body>
+
+</html>
