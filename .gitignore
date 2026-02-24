@@ -1,0 +1,7 @@
+uploads/
+__pycache__/
+*.pyc
+.DS_Store
+scrape_log.txt
+*.jpg
+!toto.jpg

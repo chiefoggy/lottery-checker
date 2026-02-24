@@ -215,6 +215,7 @@
 
 <body>
     <div class="container">
+        {% if official %}
         <header>
             <div class="draw-info">
                 <p>Latest Results</p>
@@ -235,6 +236,24 @@
                 <div class="num-circle additional">{{ "%02d"|format(official.additional_number) }}</div>
             </div>
         </section>
+        {% else %}
+        <header>
+            <div class="draw-info" style="border-bottom: none;">
+                <p>Scanner Result</p>
+                <h2>No Official Match Found</h2>
+                <div style="margin-top: 15px; color: #ff9f43; font-weight: 300;">
+                    Draw Date: {{ user_data.get('Draw Date', 'Unknown') }}
+                </div>
+            </div>
+        </header>
+        <section class="official-nums"
+            style="background: rgba(255,159,67,0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,159,67,0.3); margin-bottom: 30px;">
+            <p style="opacity: 0.9;">We found the date <strong>{{ user_data.get('Draw Date') }}</strong> on your ticket,
+                but official results for this date are not in our database yet.</p>
+            <p style="font-size: 0.85rem; opacity: 0.6; margin-top: 10px;">Our historical database is currently being
+                rebuilt. Please try again in 10 minutes.</p>
+        </section>
+        {% endif %}
 
         <section class="results-section">
             <h3>Scanned Ticket (OCR)</h3>
@@ -245,11 +264,12 @@
                     {% for n in row %}
                     {% set val = n|int %}
                     <div
-                        class="ball {% if val in official.winning_numbers %}match{% elif val == official.additional_number %}match-add{% endif %}">
+                        class="ball {% if official and val in official.winning_numbers %}match{% elif official and val == official.additional_number %}match-add{% endif %}">
                         {{ n }}
                     </div>
                     {% endfor %}
                 </div>
+                {% if official %}
                 {% set match_count = [] %}
                 {% set add_match = [] %}
                 {% for n in row %}
@@ -258,19 +278,28 @@
                 {% endfor %}
 
                 <div class="win-status">
-                    <span>{{ match_count|length }} Matches {% if add_match|length %}+ Add{% endif %}</span>
+                    <span>{{ match_count|length }} {{ 'Match' if match_count|length == 1 else 'Matches' }} {% if
+                        add_match|length %}+ Add{% endif %}</span>
                     <div class="prize">
-                        {% if match_count|length == 6 %}Group 1
-                        {% elif match_count|length == 5 and add_match|length %}Group 2
-                        {% elif match_count|length == 5 %}Group 3
-                        {% elif match_count|length == 4 and add_match|length %}Group 4
-                        {% elif match_count|length == 4 %}Group 5
-                        {% elif match_count|length == 3 and add_match|length %}Group 6
-                        {% elif match_count|length == 3 %}Group 7
+                        {% if match_count|length == 6 %}
+                        {{ official.prize_dict.get('Group 1', 'Group 1') }}
+                        {% elif match_count|length == 5 and add_match|length %}
+                        {{ official.prize_dict.get('Group 2', 'Group 2') }}
+                        {% elif match_count|length == 5 %}
+                        {{ official.prize_dict.get('Group 3', 'Group 3') }}
+                        {% elif match_count|length == 4 and add_match|length %}
+                        {{ official.prize_dict.get('Group 4', 'Group 4') }}
+                        {% elif match_count|length == 4 %}
+                        {{ official.prize_dict.get('Group 5', 'Group 5') }}
+                        {% elif match_count|length == 3 and add_match|length %}
+                        {{ official.prize_dict.get('Group 6', 'Group 6') }}
+                        {% elif match_count|length == 3 %}
+                        {{ official.prize_dict.get('Group 7', 'Group 7') }}
                         {% else %}<span class="no-matches">No Prize</span>
                         {% endif %}
                     </div>
                 </div>
+                {% endif %}
             </div>
             {% endfor %}
             {% else %}
