@@ -121,6 +121,13 @@ def upload_file():
         file.save(filepath)
         
         user_data = extract_toto_data(filepath)
+        
+        # Clean up the file after processing to save disk space on the server
+        try:
+            os.remove(filepath)
+        except Exception as e:
+            print(f"Cleanup error: {e}")
+            
         target_date = user_data.get("Draw Date")
         official_results = get_toto_results(target_date)
         
