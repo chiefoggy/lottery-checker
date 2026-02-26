@@ -8,10 +8,12 @@ from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+app.jinja_env.add_extension('jinja2.ext.do')
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
 
 def extract_toto_data(image_path):
     img = cv2.imread(image_path)
@@ -127,5 +129,4 @@ def upload_file():
                                official=official_results)
 
 if __name__ == '__main__':
-    app.jinja_env.add_extension('jinja2.ext.do')
     app.run(debug=True, port=5001)
