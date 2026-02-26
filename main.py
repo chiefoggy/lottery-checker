@@ -40,13 +40,17 @@ def extract_toto_data(image_path):
             elif not data["Draw Date"]:
                 data["Draw Date"] = date_match.group()
 
-        nums = re.findall(r'\b(0[1-9]|[1-4][0-9])\b', line)
+        # TOTO numbers are 1-49. Ensure single digits are caught even if OCR misses the leading '0'.
+        raw_nums = re.findall(r'\b(?:0?[1-9]|[1-4][0-9])\b', line)
+        nums = [f"{int(n):02d}" for n in raw_nums]
         
-        if len(nums) >= 6:
-            row_tuple = tuple(nums[:6])
+        # Support System entries (6 up to 12 numbers)
+        if 6 <= len(nums) <= 12:
+            row_tuple = tuple(nums)
             if row_tuple not in seen_rows and not any(d in upper_line for d in ["DRAW", "2025", "PM"]):
                 data["Numbers"].append(list(row_tuple))
                 seen_rows.add(row_tuple)
+
                 
     return data
 
