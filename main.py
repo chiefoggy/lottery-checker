@@ -4,7 +4,7 @@ import cv2
 import pandas as pd
 import pytesseract
 from datetime import datetime
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -101,8 +101,11 @@ def get_toto_results(target_date=None):
 def index():
     return render_template('index.html')
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
+    if request.method == 'GET':
+        return redirect(url_for('index'))
+
     if 'file' not in request.files:
         return redirect(request.url)
     
