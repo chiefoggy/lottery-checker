@@ -139,5 +139,32 @@ def upload_file():
                                user_data=user_data, 
                                official=official_results)
 
+@app.route('/manual', methods=['GET', 'POST'])
+def manual_entry():
+    if request.method == 'GET':
+        return redirect(url_for('index'))
+        
+    draw_date = request.form.get('draw_date', '').strip()
+    numbers_str = request.form.get('numbers', '').strip()
+    
+    # Extract numbers using the same regex to ensure consistency (and pad single digits)
+    raw_nums = re.findall(r'\b(?:0?[1-9]|[1-4][0-9])\b', numbers_str)
+    nums = [f"{int(n):02d}" for n in raw_nums]
+    
+    user_data = {
+        "Draw Date": draw_date if draw_date else None,
+        "Numbers": []
+    }
+    
+    # Determine validity (6-12 numbers)
+    if 6 <= len(nums) <= 12:
+        user_data["Numbers"].append(nums)
+        
+    official_results = get_toto_results(user_data["Draw Date"])
+    
+    return render_template('results.html',
+                           user_data=user_data,
+                           official=official_results)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

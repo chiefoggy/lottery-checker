@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,8 +45,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
@@ -91,6 +99,68 @@
             cursor: pointer;
         }
 
+        .tabs {
+            display: flex;
+            margin-bottom: 25px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .manual-input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .manual-input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .manual-input-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .manual-input-group input:focus {
+            border-color: var(--primary);
+        }
+
         .btn {
             background: var(--primary);
             color: white;
@@ -101,7 +171,7 @@
             font-size: 1rem;
             cursor: pointer;
             width: 100%;
-            margin-top: 30px;
+            margin-top: 15px;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
@@ -122,23 +192,57 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>TOTO Scanner</h1>
-        <p>Snap a photo of your ticket and we'll check the results instantly.</p>
-        
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <div class="upload-area" id="drop-zone">
-                <span class="upload-icon">📸</span>
-                <span>Click or drag image here</span>
-                <input type="file" name="file" id="file-input" accept="image/*" required>
-            </div>
-            <div id="file-name"></div>
-            <button type="submit" class="btn">Check Results</button>
-        </form>
+        <p>Check your results using OCR or manual entry.</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('scan')">Auto Scan</button>
+            <button class="tab-btn" onclick="switchTab('manual')">Manual Entry</button>
+        </div>
+
+        <!-- Scan Tab -->
+        <div id="tab-scan" class="tab-content active">
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <div class="upload-area" id="drop-zone">
+                    <span class="upload-icon">📸</span>
+                    <span>Click or drag image here</span>
+                    <input type="file" name="file" id="file-input" accept="image/*" required>
+                </div>
+                <div id="file-name"></div>
+                <button type="submit" class="btn">Scan Photo</button>
+            </form>
+        </div>
+
+        <!-- Manual Tab -->
+        <div id="tab-manual" class="tab-content">
+            <form action="/manual" method="post">
+                <div class="manual-input-group">
+                    <label>Draw Date (Optional, e.g. 09/10/25)</label>
+                    <input type="text" name="draw_date" placeholder="DD/MM/YY">
+                </div>
+                <div class="manual-input-group">
+                    <label>Your Numbers (Space-separated, 6-12 numbers)</label>
+                    <input type="text" name="numbers" placeholder="e.g. 07 09 14 26 29 31 42" required>
+                </div>
+                <button type="submit" class="btn">Check Numbers</button>
+            </form>
+        </div>
     </div>
 
     <script>
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        // File upload UI
         const fileInput = document.getElementById('file-input');
         const fileNameDisplay = document.getElementById('file-name');
 
@@ -149,4 +253,5 @@
         });
     </script>
 </body>
+
 </html>
